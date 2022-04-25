@@ -71,6 +71,7 @@ CROSS\s+JOIN\b                                   return 'CROSS_JOIN'
 'OPTION'                                         return 'OPTION'
 'WITH'                                           return 'WITH'
 'CAST'                                           return 'CAST'
+'::'                                             return 'DOUBLE_COLON'
 N?['](\\.|[^'])*[']                              return 'STRING'
 'NULL'                                           return 'NULL'
 (true|false)\b                                   return 'BOOLEAN'
@@ -374,7 +375,8 @@ term
     | LPAREN expressionPlus RPAREN { $$ = {nodeType: 'Term', value: $2}; }
     | IDENTIFIER LPAREN optFunctionExpressionList RPAREN { $$ = {nodeType: 'FunctionCall', name: $1, args: $3}; }
     | QUALIFIED_IDENTIFIER LPAREN optFunctionExpressionList RPAREN { $$ = {nodeType: 'FunctionCall', name: $1, args: $3}; }
-    | CAST LPAREN expression AS dataType RPAREN { $$ = {nodeType: 'Cast', expression:$3, dataType:$5}; }
+    | CAST LPAREN term AS dataType RPAREN { $$ = {nodeType: 'Cast', expression:$3, dataType:$5}; }
+    | term DOUBLE_COLON dataType { $$ = {nodeType: 'PG_Cast', expression:$1, dataType:$3}; }
     ;
 
 dataType

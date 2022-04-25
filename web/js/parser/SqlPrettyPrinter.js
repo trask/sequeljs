@@ -345,7 +345,7 @@ var SqlPrettyPrinter = {
     } else if (node.nodeType == 'Cast') {
       driver.writeKeyword('CAST')
       driver.openParen(true)
-      this.formatExpression(node.expression, driver)
+      this.formatOperand(node.expression, driver)
       driver.writeKeyword('AS')
       driver.writeKeyword(node.dataType.name)
       if (node.dataType.len !== null) {
@@ -354,6 +354,15 @@ var SqlPrettyPrinter = {
         driver.closeParen()
       }
       driver.closeParen()
+    } else if (node.nodeType == 'PG_Cast') {
+      this.formatOperand(node.expression, driver)
+      driver.writeKeyword('::')
+      driver.writeKeyword(node.dataType.name)
+      if (node.dataType.len !== null) {
+        driver.openParen(true)
+        driver.writeKeyword(node.dataType.len)
+        driver.closeParen()
+      }
     }
   },
   formatRhs: function(node, driver) {
