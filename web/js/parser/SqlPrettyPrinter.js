@@ -212,6 +212,7 @@ var SqlPrettyPrinter = {
       driver.writeLeftKeyword('')
       driver.write(node.modifier)
       driver.writeKeyword('JOIN')
+      driver.write(node.lateral)
       this.formatTableFrom(node.value, driver)
       if (node.expression) {
         driver.writeKeyword('ON')
