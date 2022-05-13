@@ -20,6 +20,7 @@ GROUP\s+BY\b                                     return 'GROUP_BY'
 'HAVING'                                         return 'HAVING'
 ORDER\s+BY\b                                     return 'ORDER_BY'
 'LIMIT'                                          return 'LIMIT'
+'OFFSET'                                         return 'OFFSET'
 (UNION\s+ALL|UNION|INTERSECT|EXCEPT)\b           return 'SET_OPERATOR'
 ','                                              return 'COMMA'
 '+'                                              return 'PLUS'
@@ -158,8 +159,14 @@ optOrderByNulls
 
 optLimitClause
     : { $$ = null; }
-    | LIMIT NUMERIC { $$ = $2; }
-    | LIMIT BIND { $$ = $2; }
+    | LIMIT NUMERIC optOffset { $$ = {value: $2, offset: $3 }; }
+    | LIMIT BIND optOffset { $$ = {value: $2, offset: $3 }; }
+    ;
+
+optOffset
+    : { $$ = null; }
+    | OFFSET NUMERIC { $$ = $2; }
+    | OFFSET BIND { $$ = $2; }
     ;
 
 optQueryHintsClause

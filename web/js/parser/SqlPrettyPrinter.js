@@ -144,10 +144,7 @@ var SqlPrettyPrinter = {
     if (node.groupBy) this.formatGroupBy(node.groupBy, driver)
     if (node.having) this.formatHaving(node.having, driver)
     if (node.orderBy) this.formatOrderBy(node.orderBy, driver)
-    if (node.limit) {
-      driver.writeLeftKeyword('LIMIT');
-      driver.write(node.limit);
-    }
+    if (node.limit) this.formatLimit(node.limit, driver)
     if (node.queryHints) this.formatQueryHints(node.queryHints, driver)
     
     driver.restoreCurrentPos()
@@ -270,6 +267,14 @@ var SqlPrettyPrinter = {
         driver.write(',')
         driver.wrapToRight()
       }
+    }
+  },
+  formatLimit: function(node, driver) {
+    driver.writeLeftKeyword('LIMIT');
+    driver.write(node.value);
+    if (node.offset) {
+      driver.write('OFFSET');
+      driver.write(node.offset);
     }
   },
   formatCondition: function(node, driver) {
