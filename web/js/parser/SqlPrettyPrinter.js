@@ -379,7 +379,12 @@ var SqlPrettyPrinter = {
       driver.write(node.op)
       driver.writeKeyword(node.kind)
       driver.openParen()
+      if (node.array) {
+        driver.writeKeyword(node.array)
+        driver.openParen()
+      }
       this.formatSelect(node.value, driver)
+      if (node.array) driver.closeParen()
       driver.closeParen()
     } else if (node.nodeType == 'RhsIs') {
       driver.writeKeyword('IS')
