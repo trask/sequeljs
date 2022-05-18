@@ -42,6 +42,7 @@ ORDER\s+BY\b                                     return 'ORDER_BY'
 'ALL'                                            return 'ALL'
 'ANY'                                            return 'ANY'
 'SOME'                                           return 'SOME'
+'ARRAY'                                          return 'ARRAY'
 'EXISTS'                                         return 'EXISTS'
 'IS'                                             return 'IS'
 'IN'                                             return 'IN'
@@ -304,6 +305,9 @@ rhsCompareTest
     | compare ALL LPAREN selectClause RPAREN { $$ = {nodeType: 'RhsCompareSub', op:$1, kind: $2, value: $4 }; }
     | compare ANY LPAREN selectClause RPAREN { $$ = {nodeType: 'RhsCompareSub', op:$1, kind: $2, value: $4 }; }
     | compare SOME LPAREN selectClause RPAREN { $$ = {nodeType: 'RhsCompareSub', op:$1, kind: $2, value: $4 }; }
+    | compare ANY LPAREN ARRAY LPAREN selectClause RPAREN RPAREN { $$ = {nodeType: 'RhsCompareSub', op:$1, kind: $2, array: $4, value: $6 }; }
+    | compare ALL LPAREN ARRAY LPAREN selectClause RPAREN RPAREN { $$ = {nodeType: 'RhsCompareSub', op:$1, kind: $2, array: $4, value: $6 }; }
+    | compare SOME LPAREN ARRAY LPAREN selectClause RPAREN RPAREN { $$ = {nodeType: 'RhsCompareSub', op:$1, kind: $2, array: $4, value: $6 }; }
     ;
 
 rhsIsTest
