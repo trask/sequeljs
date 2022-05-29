@@ -38,7 +38,7 @@ var SqlPrettyPrinter = {
       },
       write: function(st, suppressPrepend) {
         var prepend = ' '
-        if (st == ',' || st == '' || st == ')' || st == 'SELECT') prepend = ''
+        if (st == ',' || st == '' || st == ')' || st == 'WITH' || st == 'SELECT') prepend = ''
 
         if (this.prevChar =='(') prepend = ''
 
@@ -105,14 +105,14 @@ var SqlPrettyPrinter = {
     return SqlPrettyPrinter.buffer
   },
   formatWith: function(node, driver) {
+    driver.saveCurrentPos(4)
     driver.writeKeyword('WITH')
-    driver.saveCurrentPos(0)
     for (var i = 0; i < node.length; i++) {
       var elem = node[i]
       this.formatWithItem(elem, driver)
       if (i != (node.length - 1)) {
         driver.write(',')
-        driver.wrapToRight()
+        driver.write('\n')
       }
     }
     driver.restoreCurrentPos()
@@ -123,7 +123,9 @@ var SqlPrettyPrinter = {
     driver.writeKeyword('AS')
     if (node.optMaterializedClause) driver.write(node.optMaterializedClause)
     driver.openParen()
+    driver.wrapToRight()
     this.formatExpressionPlus(node.expressionPlus, driver)
+    driver.write('\n')
     driver.closeParen()
   },
   formatSelect: function(node, driver) {
