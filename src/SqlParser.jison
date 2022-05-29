@@ -73,6 +73,7 @@ CROSS\s+JOIN\b                                   return 'CROSS_JOIN'
 'LAST'                                           return 'LAST'
 'OPTION'                                         return 'OPTION'
 'WITH'                                           return 'WITH'
+'MATERIALIZED'                                   return 'MATERIALIZED'
 'CAST'                                           return 'CAST'
 '::'                                             return 'DOUBLE_COLON'
 N?['](\\.|[^'])*[']                              return 'STRING'
@@ -92,7 +93,23 @@ N?['](\\.|[^'])*[']                              return 'STRING'
 %% /* language grammar */
 
 main
-    : selectClause EOF { return {nodeType: 'Main', value: $1}; } 
+    : optWithClause selectClause EOF { return {nodeType: 'Main', with: $1, value: $2}; }
+    ;
+
+optWithClause
+    : { $$ = null; }
+    | WITH withClauseItem { $$ = [$2]; }
+    | optWithClause COMMA withClauseItem { $$ = $1; $1.push($3); }
+    ;
+
+withClauseItem
+    : IDENTIFIER AS optMaterializedClause LPAREN expressionPlus RPAREN { $$ = {includeAs: $1, optMaterializedClause: $3, expressionPlus: $5}; }
+    ;
+
+optMaterializedClause
+    : { $$ = '';}
+    | MATERIALIZED { $$ = 'MATERIALIZED'; }
+    | LOGICAL_NOT MATERIALIZED { $$ = 'NOT MATERIALIZED'; }
     ;
 
 selectClause
